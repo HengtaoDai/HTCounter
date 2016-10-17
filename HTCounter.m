@@ -8,7 +8,7 @@
 
 #import "HTCounter.h"
 
-static const NSUInteger kMaxValue = NSUIntegerMax;
+static const NSUInteger kMaxValue = NSUIntegerMax;  //最大无符号整数
 static const NSUInteger kMinValue = 1;
 
 @interface HTCounter () <UITextFieldDelegate>
@@ -16,7 +16,7 @@ static const NSUInteger kMinValue = 1;
     UIButton        *_btnCut;
     UIButton        *_btnAdd;
     UITextField     *_txtNum;
-    NSUInteger       _iPreValidValue;  //记录上一次有效的值
+    NSUInteger       _iPreValidValue;  //记录上一次有效的值  last valid value
 }
 @end
 
@@ -28,21 +28,21 @@ static const NSUInteger kMinValue = 1;
     {
         CGFloat btnWidth = 0.31*frame.size.width;
         CGFloat txtWidth = 0.38*frame.size.width;
-        //减
+        //减 cut
         _btnCut = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, btnWidth, frame.size.height)];
         [_btnCut setImage:[UIImage imageNamed:@"icon_cut_yes"] forState:UIControlStateNormal];
         [_btnCut setBackgroundColor:RGBCOLOR(235, 235, 235)];
         [_btnCut addTarget:self action:@selector(btnCut) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:_btnCut];
         
-        //加
+        //加 add
         _btnAdd = [[UIButton alloc] initWithFrame:CGRectMake(frame.size.width-btnWidth, 0, btnWidth, frame.size.height)];
         [_btnAdd setImage:[UIImage imageNamed:@"icon_add_yes"] forState:UIControlStateNormal];
         [_btnAdd setBackgroundColor:RGBCOLOR(235, 235, 235)];
         [_btnAdd addTarget:self action:@selector(btnAdd) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:_btnAdd];
         
-        //数字框
+        //数字框 
         _txtNum = [[UITextField alloc] initWithFrame:CGRectMake(btnWidth, 0, txtWidth, frame.size.height)];
         _txtNum.textColor = [UIColor blackColor];
         _txtNum.font = [UIFont systemFontOfSize:15];
@@ -54,7 +54,7 @@ static const NSUInteger kMinValue = 1;
         _txtNum.keyboardType = UIKeyboardTypeNumberPad;
         [self addSubview:_txtNum];
         
-        //
+        //two btns
         for (int i = 0; i < 2; i++)
         {
             CGFloat left = i == 0? btnWidth-1: btnWidth+txtWidth-1;
@@ -63,10 +63,10 @@ static const NSUInteger kMinValue = 1;
             [self addSubview:sxLine];
         }
         
-        _iMinValue = kMinValue;   //默认下限
-        _iMaxValue = kMaxValue;   //默认上限
+        _iMinValue = kMinValue;   //默认下限 default max
+        _iMaxValue = kMaxValue;   //默认上限 default min
         
-        [self uselessOnBtn:_btnCut];
+        [self uselessOnBtn:_btnCut];    //使减按钮无效 let btnCut useless
     }
     
     return self;
@@ -160,7 +160,7 @@ static const NSUInteger kMinValue = 1;
     _txtNum.text = [NSString stringWithFormat:@"%lu",self.iCurrentValue-1];
     _iPreValidValue = self.iCurrentValue;
     
-    if (self.delegate)
+    if ([self.delegate respondsToSelector:@selector(counter:isAdd:value:)])
     {
         [self.delegate counter:self isAdd:NO value:self.iCurrentValue];
     }
